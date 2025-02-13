@@ -2,24 +2,24 @@
     @auth
         <a
             href="{{ url('/dashboard') }}"
-            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+            class="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 px-3 py-2 font-medium transition-colors border-b-2 border-transparent hover:border-green-500 dark:hover:border-green-400"
         >
-            Dashboard
+            <i class="fas fa-tachometer-alt"></i> Dashboard
         </a>
     @else
         <a
             href="{{ route('login') }}"
-            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+            class="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 px-3 py-2 font-medium transition-colors border-b-2 border-transparent hover:border-green-500 dark:hover:border-green-400"
         >
-            Log in
+            <i class="fas fa-sign-in-alt"></i> Log in
         </a>
 
         @if (Route::has('register'))
             <a
                 href="{{ route('register') }}"
-                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                class="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 px-3 py-2 font-medium transition-colors border-b-2 border-transparent hover:border-green-500 dark:hover:border-green-400"
             >
-                Register
+                <i class="fas fa-user-plus"></i> Register
             </a>
         @endif
     @endauth
