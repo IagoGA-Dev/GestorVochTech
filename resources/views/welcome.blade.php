@@ -94,7 +94,7 @@
         </p>
 
         <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="/grupos"
+            <a href="{{ auth()->check() ? url('/dashboard') : route('register') }}"
                class="inline-flex items-center px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
                 <i class="fas fa-rocket mr-3"></i>
                 Começar Agora
