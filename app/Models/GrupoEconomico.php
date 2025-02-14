@@ -9,7 +9,7 @@ class GrupoEconomico extends Model
 {
     use HasFactory;
 
-    protected $table = 'GrupoEconomico';
+    protected $table = 'Grupo_Economicos';
 
     protected $fillable = [
         'nome',
