@@ -10,7 +10,7 @@
     $config = $sizes[$size] ?? $sizes['md'];
 @endphp
 
-<div class="rounded-full bg-white dark:bg-gray-800">
+<div>
     <h1 class="{{ $config['fontSize'] }} font-bold text-green-600 dark:text-green-400">
         Gestão<span class="text-green-400 dark:text-green-300">Pro</span>
     </h1>
