@@ -18,6 +18,16 @@ class Grupos extends Component
         'editingGrupoNome' => 'required|string|max:255',
     ];
 
+    public function getIsDisabledProperty()
+    {
+        return count($this->selectedGroups) === 0;
+    }
+
+    public function getSelectedCountProperty()
+    {
+        return count($this->selectedGroups);
+    }
+
     public function startEdit($grupoId)
     {
         $grupo = GrupoEconomico::find($grupoId);
@@ -63,13 +73,21 @@ class Grupos extends Component
 
         DB::beginTransaction();
         try {
-            // Primeiro removemos todas as unidades relacionadas às bandeiras
+            // Remover primeiro as unidades de cada bandeira
             foreach ($grupo->bandeiras as $bandeira) {
-                $bandeira->unidades()->delete();
+                foreach ($bandeira->unidades as $unidade) {
+                    // Remover relacionamentos da unidade primeiro
+                    $unidade->colaboradores()->delete();
+                    $unidade->delete();
+                }
             }
-            // Depois removemos as bandeiras
-            $grupo->bandeiras()->delete();
-            // Por fim, removemos o grupo
+            
+            // Depois remover as bandeiras
+            foreach ($grupo->bandeiras as $bandeira) {
+                $bandeira->delete();
+            }
+            
+            // Por fim, remover o grupo
             $grupo->delete();
             
             DB::commit();
@@ -83,12 +101,11 @@ class Grupos extends Component
 
     public function deleteSelected()
     {
-        if (empty($this->selectedGroups)) {
-            session()->flash('error', 'Selecione pelo menos um grupo para excluir.');
+        if ($this->isDisabled) {
             return;
         }
 
-        $grupos = GrupoEconomico::with('bandeiras')->whereIn('id', $this->selectedGroups)->get();
+        $grupos = GrupoEconomico::with(['bandeiras.unidades'])->whereIn('id', $this->selectedGroups)->get();
         $mensagem = "As seguintes bandeiras serão removidas:\n\n";
         $temBandeiras = false;
 
@@ -104,7 +121,7 @@ class Grupos extends Component
         }
 
         if ($temBandeiras) {
-            $mensagem .= "Tem certeza que deseja excluir estes grupos?";
+            $mensagem .= "Tem certeza que deseja excluir " . (count($this->selectedGroups) > 1 ? "estes grupos" : "este grupo") . "?";
             $confirmou = $this->js("confirm(" . json_encode($mensagem) . ")");
             if (!$confirmou) {
                 return;
@@ -114,13 +131,21 @@ class Grupos extends Component
         DB::beginTransaction();
         try {
             foreach ($grupos as $grupo) {
-                // Primeiro removemos todas as unidades relacionadas às bandeiras
+                // Remover primeiro as unidades de cada bandeira
                 foreach ($grupo->bandeiras as $bandeira) {
-                    $bandeira->unidades()->delete();
+                    foreach ($bandeira->unidades as $unidade) {
+                        // Remover relacionamentos da unidade primeiro
+                        $unidade->colaboradores()->delete();
+                        $unidade->delete();
+                    }
                 }
-                // Depois removemos as bandeiras
-                $grupo->bandeiras()->delete();
-                // Por fim, removemos o grupo
+                
+                // Depois remover as bandeiras
+                foreach ($grupo->bandeiras as $bandeira) {
+                    $bandeira->delete();
+                }
+                
+                // Por fim, remover o grupo
                 $grupo->delete();
             }
             
@@ -136,7 +161,7 @@ class Grupos extends Component
     public function render()
     {
         return view('livewire.grupos', [
-            'grupos' => GrupoEconomico::all()
+            'grupos' => GrupoEconomico::all(),
         ]);
     }
 }
