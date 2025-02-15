@@ -1,6 +1,6 @@
 <div>
     <div class="mb-6 flex justify-between items-center">
-        <h3 class="text-lg font-medium">Lista de Grupos Econômicos</h3>
+        <h3 class="text-lg font-medium">Lista de Colaboradores</h3>
         <div class="flex gap-2">
             <button 
                 wire:click="deleteSelected" 
@@ -21,7 +21,7 @@
                 <svg class="h-4 w-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Adicionar novo grupo
+                Adicionar novo colaborador
             </button>
         </div>
     </div>
@@ -61,22 +61,22 @@
     @endif
 
     <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-        @foreach($grupos as $grupo)
+        @foreach($colaboradores as $colaborador)
             <li class="py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 px-4 rounded-lg transition-colors duration-150">
                 <div class="flex items-center">
-                    <input type="checkbox" wire:model.live="selectedGroups" value="{{ $grupo->id }}" class="mr-3 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                    <input type="checkbox" wire:model.live="selectedColaboradores" value="{{ $colaborador->id }}" class="mr-3 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                     <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
                         <span class="text-blue-600 dark:text-blue-300 font-medium text-lg">
-                            {{ strtoupper(substr($grupo->nome, 0, 1)) }}
+                            {{ strtoupper(substr($colaborador->nome, 0, 1)) }}
                         </span>
                     </div>
                     <div class="ml-4 flex-grow">
-                        @if($editingGrupoId === $grupo->id)
+                        @if($editingColaboradorId === $colaborador->id)
                             <div class="flex items-center gap-2">
                                 <input type="text" 
-                                    wire:model="editingGrupoNome" 
+                                    wire:model="editingColaboradorNome" 
                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-                                    placeholder="Nome do grupo">
+                                    placeholder="Nome do colaborador">
                                 <button wire:click="saveEdit" class="text-green-600 hover:text-green-700">
                                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -89,19 +89,20 @@
                                 </button>
                             </div>
                         @else
-                            <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $grupo->nome }}</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $colaborador->nome }}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $colaborador->email }}</p>
                         @endif
                     </div>
                 </div>
-                @if($editingGrupoId !== $grupo->id)
+                @if($editingColaboradorId !== $colaborador->id)
                     <div class="flex items-center gap-2">
-                        <button wire:click="startEdit({{ $grupo->id }})" class="text-blue-600 hover:text-blue-700">
+                        <button wire:click="startEdit({{ $colaborador->id }})" class="text-blue-600 hover:text-blue-700">
                             <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                         </button>
                         <button 
-                            wire:click="deleteGrupo({{ $grupo->id }})" 
+                            wire:click="deleteColaborador({{ $colaborador->id }})" 
                             type="button"
                             class="text-red-600 hover:text-red-700">
                             <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -114,7 +115,7 @@
         @endforeach
     </ul>
 
-    <div id="createGrupoModal" class="fixed z-50 inset-0 overflow-y-auto opacity-0 pointer-events-none transition-all duration-300 ease-out" style="display:none;">
+    <div id="createColaboradorModal" class="fixed z-50 inset-0 overflow-y-auto opacity-0 pointer-events-none transition-all duration-300 ease-out" style="display:none;">
         <!-- Overlay -->
         <div class="fixed inset-0" aria-hidden="true">
             <div class="absolute inset-0 bg-gray-500 dark:bg-gray-900 transition-opacity duration-300 ease-in-out opacity-0 will-change-opacity" 
@@ -130,9 +131,9 @@
                     <div class="sm:flex sm:items-start">
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                             <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">
-                                Adicionar novo grupo
+                                Adicionar novo colaborador
                             </h3>
-                            @livewire('add-entity', ['entityName' => 'grupo', 'entityModel' => 'App\Models\GrupoEconomico', 'entityField' => 'nome'])
+                            @livewire('add-entity', ['entityName' => 'colaborador', 'entityModel' => 'App\Models\Colaborador', 'entityField' => 'nome'])
                         </div>
                     </div>
                 </div>
