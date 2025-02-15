@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogsActivity;
 
 class Unidade extends Model {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'unidades';
 

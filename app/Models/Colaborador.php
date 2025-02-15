@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogsActivity;
 
 class Colaborador extends Model {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'colaboradores';
 
@@ -21,4 +22,3 @@ class Colaborador extends Model {
         return $this->belongsTo(Unidade::class);
     }
 }
-

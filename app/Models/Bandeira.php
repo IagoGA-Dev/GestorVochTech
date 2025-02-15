@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogsActivity;
 
 class Bandeira extends Model {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'bandeiras';
 
@@ -23,4 +24,3 @@ class Bandeira extends Model {
         return $this->hasMany(Unidade::class);
     }
 }
-

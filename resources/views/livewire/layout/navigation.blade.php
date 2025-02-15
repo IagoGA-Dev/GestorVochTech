@@ -49,6 +49,10 @@ new class extends Component {
                                 wire:navigate>
                         <i class="fas fa-user-tie mr-2"></i>{{ __('Colaboradores') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('auditoria')" :active="request()->routeIs('auditoria')" wire:navigate>
+                        <i class="fas fa-history mr-2"></i>{{ __('Auditoria') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -125,6 +129,10 @@ new class extends Component {
             <x-responsive-nav-link :href="route('colaboradores')" :active="request()->routeIs('colaboradores')"
                                    wire:navigate>
                 <i class="fas fa-user-tie mr-2"></i>{{ __('Colaboradores') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('auditoria')" :active="request()->routeIs('auditoria')" wire:navigate>
+                <i class="fas fa-history mr-2"></i>{{ __('Auditoria') }}
             </x-responsive-nav-link>
 
             <!-- Responsive Settings Options -->
