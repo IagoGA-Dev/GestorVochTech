@@ -5,6 +5,7 @@ namespace App\Traits;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity as SpatieLogsActivity;
+use Illuminate\Database\Eloquent\Model;
 
 trait LogsActivity
 {
@@ -32,7 +33,8 @@ trait LogsActivity
     protected static function bootLogsActivity()
     {
         static::created(function ($model) {
-            if ($user = Auth::user()) {
+            $user = Auth::user();
+            if ($user && $user instanceof Model) {
                 activity()
                     ->performedOn($model)
                     ->causedBy($user)
@@ -47,7 +49,8 @@ trait LogsActivity
         });
 
         static::updated(function ($model) {
-            if ($user = Auth::user()) {
+            $user = Auth::user();
+            if ($user && $user instanceof Model) {
                 $changes = $model->getDirty();
                 $original = collect($model->getOriginal())
                     ->only(['id', 'nome', 'name'])
@@ -71,7 +74,8 @@ trait LogsActivity
         });
 
         static::deleting(function ($model) {
-            if ($user = Auth::user()) {
+            $user = Auth::user();
+            if ($user && $user instanceof Model) {
                 activity()
                     ->performedOn($model)
                     ->causedBy($user)
