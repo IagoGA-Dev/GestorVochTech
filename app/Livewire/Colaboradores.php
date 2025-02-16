@@ -92,7 +92,7 @@ class Colaboradores extends Component
     public function render()
     {
         return view('livewire.colaboradores', [
-            'colaboradores' => Colaborador::all(),
+            'colaboradores' => Colaborador::with(['unidade.bandeira.grupoEconomico'])->get(),
         ]);
     }
 }
