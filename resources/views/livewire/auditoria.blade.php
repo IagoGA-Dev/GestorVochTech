@@ -9,7 +9,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white rounded shadow-lg p-6">
+            <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="flex justify-between mb-4">
                     <div class="flex items-center gap-4">
                         <select wire:model.live="perPage" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">

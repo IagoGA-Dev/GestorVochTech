@@ -147,7 +147,7 @@ class Bandeiras extends Component
     public function render()
     {
         return view('livewire.bandeiras', [
-            'bandeiras' => Bandeira::all(),
+            'bandeiras' => Bandeira::with('grupoEconomico')->get(),
         ]);
     }
 }

@@ -92,6 +92,24 @@
                             </div>
                         @else
                             <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $unidade->nome_fantasia }}</p>
+                            <div class="mt-1 flex flex-wrap gap-2 text-xs">
+                                @if($unidade->bandeira)
+                                    <span class="inline-flex items-center text-purple-600 dark:text-purple-400">
+                                        <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                                        </svg>
+                                        {{ $unidade->bandeira->nome }}
+                                    </span>
+                                @endif
+                                @if($unidade->bandeira?->grupoEconomico)
+                                    <span class="inline-flex items-center text-green-600 dark:text-green-400">
+                                        <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                        </svg>
+                                        {{ $unidade->bandeira->grupoEconomico->nome }}
+                                    </span>
+                                @endif
+                            </div>
                         @endif
                     </div>
                 </div>

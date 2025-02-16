@@ -143,7 +143,7 @@ class Unidades extends Component
     public function render()
     {
         return view('livewire.unidades', [
-            'unidades' => Unidade::all(),
+            'unidades' => Unidade::with(['bandeira.grupoEconomico'])->get(),
         ]);
     }
 }
