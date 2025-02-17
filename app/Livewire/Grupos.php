@@ -9,13 +9,10 @@ use Illuminate\Support\Facades\DB;
 class Grupos extends Component
 {
     public $selectedGroups = [];
-    public $editingGrupoId = null;
-    public $editingGrupoNome = '';
     
-    protected $listeners = ['grupoCreated' => '$refresh'];
-
-    protected $rules = [
-        'editingGrupoNome' => 'required|string|max:255',
+    protected $listeners = [
+        'grupoCreated' => '$refresh',
+        'grupoUpdated' => '$refresh'
     ];
 
     public function getIsDisabledProperty()
@@ -26,32 +23,6 @@ class Grupos extends Component
     public function getSelectedCountProperty()
     {
         return count($this->selectedGroups);
-    }
-
-    public function startEdit($grupoId)
-    {
-        $grupo = GrupoEconomico::find($grupoId);
-        $this->editingGrupoId = $grupoId;
-        $this->editingGrupoNome = $grupo->nome;
-    }
-
-    public function saveEdit()
-    {
-        $this->validate();
-
-        $grupo = GrupoEconomico::find($this->editingGrupoId);
-        $grupo->update(['nome' => $this->editingGrupoNome]);
-
-        $this->editingGrupoId = null;
-        $this->editingGrupoNome = '';
-        
-        session()->flash('message', 'Grupo atualizado com sucesso!');
-    }
-
-    public function cancelEdit()
-    {
-        $this->editingGrupoId = null;
-        $this->editingGrupoNome = '';
     }
 
     public function deleteGrupo($grupoId)

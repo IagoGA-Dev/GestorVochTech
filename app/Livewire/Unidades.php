@@ -9,13 +9,10 @@ use Illuminate\Support\Facades\DB;
 class Unidades extends Component
 {
     public $selectedUnidades = [];
-    public $editingUnidadeId = null;
-    public $editingUnidadeNome = '';
     
-    protected $listeners = ['unidadeCreated' => '$refresh'];
-
-    protected $rules = [
-        'editingUnidadeNome' => 'required|string|max:255',
+    protected $listeners = [
+        'unidadeCreated' => '$refresh',
+        'unidadeUpdated' => '$refresh'
     ];
 
     public function getIsDisabledProperty()
@@ -26,32 +23,6 @@ class Unidades extends Component
     public function getSelectedCountProperty()
     {
         return count($this->selectedUnidades);
-    }
-
-    public function startEdit($unidadeId)
-    {
-        $unidade = Unidade::find($unidadeId);
-        $this->editingUnidadeId = $unidadeId;
-        $this->editingUnidadeNome = $unidade->nome_fantasia;
-    }
-
-    public function saveEdit()
-    {
-        $this->validate();
-
-        $unidade = Unidade::find($this->editingUnidadeId);
-        $unidade->update(['nome_fantasia' => $this->editingUnidadeNome]);
-
-        $this->editingUnidadeId = null;
-        $this->editingUnidadeNome = '';
-        
-        session()->flash('message', 'Unidade atualizada com sucesso!');
-    }
-
-    public function cancelEdit()
-    {
-        $this->editingUnidadeId = null;
-        $this->editingUnidadeNome = '';
     }
 
     public function deleteUnidade($unidadeId)

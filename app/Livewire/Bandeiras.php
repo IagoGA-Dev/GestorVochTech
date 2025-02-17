@@ -9,13 +9,10 @@ use Illuminate\Support\Facades\DB;
 class Bandeiras extends Component
 {
     public $selectedBandeiras = [];
-    public $editingBandeiraId = null;
-    public $editingBandeiraNome = '';
     
-    protected $listeners = ['bandeiraCreated' => '$refresh'];
-
-    protected $rules = [
-        'editingBandeiraNome' => 'required|string|max:255',
+    protected $listeners = [
+        'bandeiraCreated' => '$refresh',
+        'bandeiraUpdated' => '$refresh'
     ];
 
     public function getIsDisabledProperty()
@@ -26,32 +23,6 @@ class Bandeiras extends Component
     public function getSelectedCountProperty()
     {
         return count($this->selectedBandeiras);
-    }
-
-    public function startEdit($bandeiraId)
-    {
-        $bandeira = Bandeira::find($bandeiraId);
-        $this->editingBandeiraId = $bandeiraId;
-        $this->editingBandeiraNome = $bandeira->nome;
-    }
-
-    public function saveEdit()
-    {
-        $this->validate();
-
-        $bandeira = Bandeira::find($this->editingBandeiraId);
-        $bandeira->update(['nome' => $this->editingBandeiraNome]);
-
-        $this->editingBandeiraId = null;
-        $this->editingBandeiraNome = '';
-        
-        session()->flash('message', 'Bandeira atualizada com sucesso!');
-    }
-
-    public function cancelEdit()
-    {
-        $this->editingBandeiraId = null;
-        $this->editingBandeiraNome = '';
     }
 
     public function deleteBandeira($bandeiraId)

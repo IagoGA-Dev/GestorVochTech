@@ -9,13 +9,10 @@ use Illuminate\Support\Facades\DB;
 class Colaboradores extends Component
 {
     public $selectedColaboradores = [];
-    public $editingColaboradorId = null;
-    public $editingColaboradorNome = '';
     
-    protected $listeners = ['colaboradorCreated' => '$refresh'];
-
-    protected $rules = [
-        'editingColaboradorNome' => 'required|string|max:255',
+    protected $listeners = [
+        'colaboradorCreated' => '$refresh',
+        'colaboradorUpdated' => '$refresh'
     ];
 
     public function getIsDisabledProperty()
@@ -26,32 +23,6 @@ class Colaboradores extends Component
     public function getSelectedCountProperty()
     {
         return count($this->selectedColaboradores);
-    }
-
-    public function startEdit($colaboradorId)
-    {
-        $colaborador = Colaborador::find($colaboradorId);
-        $this->editingColaboradorId = $colaboradorId;
-        $this->editingColaboradorNome = $colaborador->nome;
-    }
-
-    public function saveEdit()
-    {
-        $this->validate();
-
-        $colaborador = Colaborador::find($this->editingColaboradorId);
-        $colaborador->update(['nome' => $this->editingColaboradorNome]);
-
-        $this->editingColaboradorId = null;
-        $this->editingColaboradorNome = '';
-        
-        session()->flash('message', 'Colaborador atualizado com sucesso!');
-    }
-
-    public function cancelEdit()
-    {
-        $this->editingColaboradorId = null;
-        $this->editingColaboradorNome = '';
     }
 
     public function deleteColaborador($colaboradorId)
