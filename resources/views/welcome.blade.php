@@ -20,7 +20,9 @@
     class="bg-white dark:bg-gray-800 sticky top-0 z-50 shadow-lg border-b border-green-100 dark:border-gray-700">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
-            <x-application-logo size="md"/>
+            <a href="/" wire:navigate>
+                <x-application-logo size="md"/>
+            </a>
             <!-- Navegação Desktop -->
             <nav class="hidden md:flex space-x-8">
                 <a href="/grupos"
@@ -46,7 +48,7 @@
                 @if (Route::has('login'))
                     <livewire:welcome.navigation/>
                 @endif
-                <!-- <livewire:light-switch /> -->
+                <livewire:dark-mode-toggle />
             </div>
 
             <!-- Responsive Navigation Menu -->

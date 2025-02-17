@@ -22,7 +22,7 @@ new class extends Component {
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" wire:navigate>
+                    <a href="/" wire:navigate>
                         <x-application-logo size="sm"/>
                     </a>
                 </div>
@@ -56,9 +56,11 @@ new class extends Component {
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden md:flex md:items-center md:ms-6">
-                <x-dropdown align="right" width="48">
+            <!-- User Menu and Dark Mode -->
+            <div class="hidden md:flex md:items-center md:gap-1">
+                <!-- Settings Dropdown -->
+                <div class="me-2">
+                    <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
                             class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
@@ -88,7 +90,12 @@ new class extends Component {
                             </x-dropdown-link>
                         </button>
                     </x-slot>
-                </x-dropdown>
+                    </x-dropdown>
+                </div>
+                <!-- Dark Mode Toggle -->
+                <div class="-me-2">
+                    <livewire:dark-mode-toggle />
+                </div>
             </div>
 
             <!-- Hamburger -->
@@ -155,6 +162,13 @@ new class extends Component {
                             {{ __('Log Out') }}
                         </x-responsive-nav-link>
                     </button>
+
+                    <!-- Mobile Dark Mode Toggle -->
+                    <div class="mt-3 space-y-1">
+                        <div class="px-4">
+                            <livewire:dark-mode-toggle />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
