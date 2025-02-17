@@ -5,9 +5,12 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\GrupoEconomico;
 use Illuminate\Support\Facades\DB;
+use App\Traits\WithExport;
 
 class Grupos extends Component
 {
+    use WithExport;
+
     public $selectedGroups = [];
     
     protected $listeners = [
@@ -25,48 +28,57 @@ class Grupos extends Component
         return count($this->selectedGroups);
     }
 
+    public function getExportHeaders(): array
+    {
+        return [
+            'ID',
+            'Nome',
+            'Criado em',
+            'Atualizado em'
+        ];
+    }
+
+    public function getExportData(): array
+    {
+        return GrupoEconomico::all()
+            ->map(fn ($grupo) => [
+                $grupo->id,
+                $grupo->nome,
+                $grupo->created_at->format('d/m/Y H:i:s'),
+                $grupo->updated_at->format('d/m/Y H:i:s')
+            ])
+            ->toArray();
+    }
+
+    public function getExportFilename(): string
+    {
+        return 'grupos';
+    }
+
     public function deleteGrupo($grupoId)
     {
-        $grupo = GrupoEconomico::with(['bandeiras.unidades'])->find($grupoId);
-        $bandeirasNomes = $grupo->bandeiras->pluck('nome')->toArray();
-        
-        if (count($bandeirasNomes) > 0) {
-            $mensagem = "As seguintes bandeiras serão removidas:\n";
-            foreach ($bandeirasNomes as $nome) {
-                $mensagem .= "- " . $nome . "\n";
-            }
-            $mensagem .= "\nTem certeza que deseja excluir este grupo?";
-            
-            if (!$this->js("confirm(" . json_encode($mensagem) . ")")) {
-                return;
-            }
-        }
-
         DB::beginTransaction();
         try {
-            // Remover primeiro as unidades de cada bandeira
+            $grupo = GrupoEconomico::with(['bandeiras.unidades.colaboradores'])->find($grupoId);
+            
             foreach ($grupo->bandeiras as $bandeira) {
                 foreach ($bandeira->unidades as $unidade) {
-                    // Remover relacionamentos da unidade primeiro
-                    $unidade->colaboradores()->delete();
+                    foreach ($unidade->colaboradores as $colaborador) {
+                        $colaborador->delete();
+                    }
                     $unidade->delete();
                 }
-            }
-            
-            // Depois remover as bandeiras
-            foreach ($grupo->bandeiras as $bandeira) {
                 $bandeira->delete();
             }
             
-            // Por fim, remover o grupo
             $grupo->delete();
             
             DB::commit();
             $this->dispatch('grupoCreated');
-            session()->flash('message', 'Grupo e suas bandeiras foram excluídos com sucesso!');
+            session()->flash('message', 'Grupo econômico e seus dados relacionados foram excluídos com sucesso!');
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Erro ao excluir o grupo: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao excluir o grupo econômico: ' . $e->getMessage());
         }
     }
 
@@ -76,63 +88,38 @@ class Grupos extends Component
             return;
         }
 
-        $grupos = GrupoEconomico::with(['bandeiras.unidades'])->whereIn('id', $this->selectedGroups)->get();
-        $mensagem = "As seguintes bandeiras serão removidas:\n\n";
-        $temBandeiras = false;
-
-        foreach ($grupos as $grupo) {
-            if ($grupo->bandeiras->count() > 0) {
-                $temBandeiras = true;
-                $mensagem .= "Grupo {$grupo->nome}:\n";
-                foreach ($grupo->bandeiras as $bandeira) {
-                    $mensagem .= "- {$bandeira->nome}\n";
-                }
-                $mensagem .= "\n";
-            }
-        }
-
-        if ($temBandeiras) {
-            $mensagem .= "Tem certeza que deseja excluir " . (count($this->selectedGroups) > 1 ? "estes grupos" : "este grupo") . "?";
-            $confirmou = $this->js("confirm(" . json_encode($mensagem) . ")");
-            if (!$confirmou) {
-                return;
-            }
-        }
-
         DB::beginTransaction();
         try {
+            $grupos = GrupoEconomico::with(['bandeiras.unidades.colaboradores'])
+                ->whereIn('id', $this->selectedGroups)
+                ->get();
+
             foreach ($grupos as $grupo) {
-                // Remover primeiro as unidades de cada bandeira
                 foreach ($grupo->bandeiras as $bandeira) {
                     foreach ($bandeira->unidades as $unidade) {
-                        // Remover relacionamentos da unidade primeiro
-                        $unidade->colaboradores()->delete();
+                        foreach ($unidade->colaboradores as $colaborador) {
+                            $colaborador->delete();
+                        }
                         $unidade->delete();
                     }
-                }
-                
-                // Depois remover as bandeiras
-                foreach ($grupo->bandeiras as $bandeira) {
                     $bandeira->delete();
                 }
-                
-                // Por fim, remover o grupo
                 $grupo->delete();
             }
             
             DB::commit();
             $this->selectedGroups = [];
-            session()->flash('message', 'Grupos e suas bandeiras foram excluídos com sucesso!');
+            session()->flash('message', 'Grupos econômicos e seus dados relacionados foram excluídos com sucesso!');
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Erro ao excluir os grupos: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao excluir os grupos econômicos: ' . $e->getMessage());
         }
     }
 
     public function render()
     {
         return view('livewire.grupos', [
-            'grupos' => GrupoEconomico::all(),
+            'grupos' => GrupoEconomico::all()
         ]);
     }
 }

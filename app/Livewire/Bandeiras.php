@@ -5,15 +5,48 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Bandeira;
 use Illuminate\Support\Facades\DB;
+use App\Traits\WithExport;
 
 class Bandeiras extends Component
 {
+    use WithExport;
+
     public $selectedBandeiras = [];
     
     protected $listeners = [
         'bandeiraCreated' => '$refresh',
         'bandeiraUpdated' => '$refresh'
     ];
+
+    public function getExportHeaders(): array
+    {
+        return [
+            'ID',
+            'Nome',
+            'Grupo Econômico',
+            'Criado em',
+            'Atualizado em'
+        ];
+    }
+
+    public function getExportData(): array
+    {
+        return Bandeira::with('grupoEconomico')
+            ->get()
+            ->map(fn ($bandeira) => [
+                $bandeira->id,
+                $bandeira->nome,
+                $bandeira->grupoEconomico->nome,
+                $bandeira->created_at->format('d/m/Y H:i:s'),
+                $bandeira->updated_at->format('d/m/Y H:i:s')
+            ])
+            ->toArray();
+    }
+
+    public function getExportFilename(): string
+    {
+        return 'bandeiras';
+    }
 
     public function getIsDisabledProperty()
     {

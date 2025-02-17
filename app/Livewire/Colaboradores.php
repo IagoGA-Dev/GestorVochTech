@@ -5,15 +5,56 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Colaborador;
 use Illuminate\Support\Facades\DB;
+use App\Traits\WithExport;
 
 class Colaboradores extends Component
 {
+    use WithExport;
+
     public $selectedColaboradores = [];
     
     protected $listeners = [
         'colaboradorCreated' => '$refresh',
         'colaboradorUpdated' => '$refresh'
     ];
+
+    public function getExportHeaders(): array
+    {
+        return [
+            'ID',
+            'Nome',
+            'Email',
+            'CPF',
+            'Unidade',
+            'Bandeira',
+            'Grupo Econômico',
+            'Criado em',
+            'Atualizado em'
+        ];
+    }
+
+    public function getExportData(): array
+    {
+        return Colaborador::with(['unidade.bandeira.grupoEconomico'])
+            ->get()
+            ->map(fn ($colaborador) => [
+                $colaborador->id,
+                $colaborador->nome,
+                $colaborador->email,
+                $colaborador->cpf,
+                $colaborador->unidade->nome_fantasia,
+                $colaborador->unidade->bandeira->nome,
+                $colaborador->unidade->bandeira->grupoEconomico->nome,
+                $colaborador->created_at->format('d/m/Y H:i:s'),
+                $colaborador->updated_at->format('d/m/Y H:i:s')
+            ])
+            ->toArray();
+    }
+
+    public function getExportFilename(): string
+    {
+        return 'colaboradores';
+    }
 
     public function getIsDisabledProperty()
     {
