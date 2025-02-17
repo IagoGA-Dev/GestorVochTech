@@ -100,7 +100,7 @@
                         </svg>
                     </button>
                     <button 
-                        wire:click="deleteBandeira({{ $bandeira->id }})" 
+                        wire:click="confirmDelete({{ $bandeira->id }})" 
                         type="button"
                         class="text-red-600 hover:text-red-700">
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,4 +139,36 @@
             </div>
         </x-modal>
     @endforeach
+
+    {{-- Delete Confirmation Modal --}}
+    @if($showDeleteModal)
+        <x-delete-modal>
+            <x-slot:title>
+                Confirmar Exclusão de Bandeira
+            </x-slot>
+
+            Você está prestes a excluir a bandeira <strong>{{ $itemToDelete->nome }}</strong>.
+            
+            <x-slot:details>
+                @if($itemToDelete->unidades->count() > 0)
+                    <div class="space-y-3">
+                        <p>
+                            Esta bandeira possui <strong>{{ $itemToDelete->unidades->count() }}</strong> 
+                            {{ $itemToDelete->unidades->count() == 1 ? 'unidade associada' : 'unidades associadas' }}:
+                        </p>
+                        <ul class="list-disc list-inside space-y-1">
+                            @foreach($itemToDelete->unidades as $unidade)
+                                <li>{{ $unidade->nome_fantasia }} ({{ $unidade->colaboradores->count() }} colaboradores)</li>
+                            @endforeach
+                        </ul>
+                        <p class="text-red-500 dark:text-red-400">
+                            Todas as unidades e colaboradores associados serão excluídos permanentemente.
+                        </p>
+                    </div>
+                @else
+                    <p>Esta bandeira não possui unidades associadas.</p>
+                @endif
+            </x-slot>
+        </x-delete-modal>
+    @endif
 </div>

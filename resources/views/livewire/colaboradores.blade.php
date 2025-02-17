@@ -117,7 +117,7 @@
                         </svg>
                     </button>
                     <button 
-                        wire:click="deleteColaborador({{ $colaborador->id }})" 
+                        wire:click="confirmDelete({{ $colaborador->id }})" 
                         type="button"
                         class="text-red-600 hover:text-red-700">
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -156,4 +156,18 @@
             </div>
         </x-modal>
     @endforeach
+
+    {{-- Delete Confirmation Modal --}}
+    @if($showDeleteModal)
+        <x-delete-modal>
+            <x-slot:title>
+                Confirmar Exclusão de Colaborador
+            </x-slot>
+
+            <p class="text-gray-600 dark:text-gray-300">
+                Você está prestes a excluir o colaborador <strong>{{ $itemToDelete->nome }}</strong>.
+                Esta ação não pode ser desfeita.
+            </p>
+        </x-delete-modal>
+    @endif
 </div>

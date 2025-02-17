@@ -108,7 +108,7 @@
                         </svg>
                     </button>
                     <button 
-                        wire:click="deleteUnidade({{ $unidade->id }})" 
+                        wire:click="confirmDelete({{ $unidade->id }})" 
                         type="button"
                         class="text-red-600 hover:text-red-700">
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -147,4 +147,36 @@
             </div>
         </x-modal>
     @endforeach
+
+    {{-- Delete Confirmation Modal --}}
+    @if($showDeleteModal)
+        <x-delete-modal>
+            <x-slot:title>
+                Confirmar Exclusão de Unidade
+            </x-slot>
+
+            Você está prestes a excluir a unidade <strong>{{ $itemToDelete->nome_fantasia }}</strong>.
+            
+            <x-slot:details>
+                @if($itemToDelete->colaboradores->count() > 0)
+                    <div class="space-y-3">
+                        <p>
+                            Esta unidade possui <strong>{{ $itemToDelete->colaboradores->count() }}</strong> 
+                            {{ $itemToDelete->colaboradores->count() == 1 ? 'colaborador associado' : 'colaboradores associados' }}:
+                        </p>
+                        <ul class="list-disc list-inside space-y-1">
+                            @foreach($itemToDelete->colaboradores as $colaborador)
+                                <li>{{ $colaborador->nome }}</li>
+                            @endforeach
+                        </ul>
+                        <p class="text-red-500 dark:text-red-400">
+                            Todos os colaboradores serão excluídos permanentemente.
+                        </p>
+                    </div>
+                @else
+                    <p>Esta unidade não possui colaboradores associados.</p>
+                @endif
+            </x-slot>
+        </x-delete-modal>
+    @endif
 </div>

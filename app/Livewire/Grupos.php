@@ -4,18 +4,19 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\GrupoEconomico;
-use Illuminate\Support\Facades\DB;
 use App\Traits\WithExport;
+use App\Traits\WithDelete;
 
 class Grupos extends Component
 {
-    use WithExport;
+    use WithExport, WithDelete;
 
     public $selectedGroups = [];
     
     protected $listeners = [
         'grupoCreated' => '$refresh',
-        'grupoUpdated' => '$refresh'
+        'grupoUpdated' => '$refresh',
+        'entity-deleted' => '$refresh'
     ];
 
     public function getIsDisabledProperty()
@@ -55,31 +56,9 @@ class Grupos extends Component
         return 'grupos';
     }
 
-    public function deleteGrupo($grupoId)
+    protected function getModel()
     {
-        DB::beginTransaction();
-        try {
-            $grupo = GrupoEconomico::with(['bandeiras.unidades.colaboradores'])->find($grupoId);
-            
-            foreach ($grupo->bandeiras as $bandeira) {
-                foreach ($bandeira->unidades as $unidade) {
-                    foreach ($unidade->colaboradores as $colaborador) {
-                        $colaborador->delete();
-                    }
-                    $unidade->delete();
-                }
-                $bandeira->delete();
-            }
-            
-            $grupo->delete();
-            
-            DB::commit();
-            $this->dispatch('grupoCreated');
-            session()->flash('message', 'Grupo econômico e seus dados relacionados foram excluídos com sucesso!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            session()->flash('error', 'Erro ao excluir o grupo econômico: ' . $e->getMessage());
-        }
+        return GrupoEconomico::class;
     }
 
     public function deleteSelected()
@@ -88,32 +67,13 @@ class Grupos extends Component
             return;
         }
 
-        DB::beginTransaction();
-        try {
-            $grupos = GrupoEconomico::with(['bandeiras.unidades.colaboradores'])
-                ->whereIn('id', $this->selectedGroups)
-                ->get();
-
-            foreach ($grupos as $grupo) {
-                foreach ($grupo->bandeiras as $bandeira) {
-                    foreach ($bandeira->unidades as $unidade) {
-                        foreach ($unidade->colaboradores as $colaborador) {
-                            $colaborador->delete();
-                        }
-                        $unidade->delete();
-                    }
-                    $bandeira->delete();
-                }
-                $grupo->delete();
-            }
-            
-            DB::commit();
-            $this->selectedGroups = [];
-            session()->flash('message', 'Grupos econômicos e seus dados relacionados foram excluídos com sucesso!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            session()->flash('error', 'Erro ao excluir os grupos econômicos: ' . $e->getMessage());
+        foreach ($this->selectedGroups as $id) {
+            $this->confirmDelete($id);
+            $this->delete();
         }
+        
+        $this->selectedGroups = [];
+        session()->flash('message', 'Grupos selecionados foram excluídos com sucesso!');
     }
 
     public function render()

@@ -90,7 +90,7 @@
                         </svg>
                     </button>
                     <button 
-                        wire:click="deleteGrupo({{ $grupo->id }})" 
+                        wire:click="confirmDelete({{ $grupo->id }})" 
                         type="button"
                         class="text-red-600 hover:text-red-700">
                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,4 +129,36 @@
             </div>
         </x-modal>
     @endforeach
+
+    {{-- Delete Confirmation Modal --}}
+    @if($showDeleteModal)
+        <x-delete-modal>
+            <x-slot:title>
+                Confirmar Exclusão de Grupo
+            </x-slot>
+
+            Você está prestes a excluir o grupo <strong>{{ $itemToDelete->nome }}</strong>.
+            
+            <x-slot:details>
+                @if($itemToDelete->bandeiras->count() > 0)
+                    <div class="space-y-3">
+                        <p>
+                            Este grupo possui <strong>{{ $itemToDelete->bandeiras->count() }}</strong> 
+                            {{ $itemToDelete->bandeiras->count() == 1 ? 'bandeira associada' : 'bandeiras associadas' }}:
+                        </p>
+                        <ul class="list-disc list-inside space-y-1">
+                            @foreach($itemToDelete->bandeiras as $bandeira)
+                                <li>{{ $bandeira->nome }} ({{ $bandeira->unidades->count() }} unidades)</li>
+                            @endforeach
+                        </ul>
+                        <p class="text-red-500 dark:text-red-400">
+                            Todas as bandeiras, unidades e colaboradores associados serão excluídos permanentemente.
+                        </p>
+                    </div>
+                @else
+                    <p>Este grupo não possui bandeiras associadas.</p>
+                @endif
+            </x-slot>
+        </x-delete-modal>
+    @endif
 </div>

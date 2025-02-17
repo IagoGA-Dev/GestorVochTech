@@ -4,18 +4,19 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Colaborador;
-use Illuminate\Support\Facades\DB;
 use App\Traits\WithExport;
+use App\Traits\WithDelete;
 
 class Colaboradores extends Component
 {
-    use WithExport;
+    use WithExport, WithDelete;
 
     public $selectedColaboradores = [];
     
     protected $listeners = [
         'colaboradorCreated' => '$refresh',
-        'colaboradorUpdated' => '$refresh'
+        'colaboradorUpdated' => '$refresh',
+        'entity-deleted' => '$refresh'
     ];
 
     public function getExportHeaders(): array
@@ -66,20 +67,9 @@ class Colaboradores extends Component
         return count($this->selectedColaboradores);
     }
 
-    public function deleteColaborador($colaboradorId)
+    protected function getModel()
     {
-        DB::beginTransaction();
-        try {
-            $colaborador = Colaborador::find($colaboradorId);
-            $colaborador->delete();
-            
-            DB::commit();
-            $this->dispatch('colaboradorCreated');
-            session()->flash('message', 'Colaborador excluído com sucesso!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            session()->flash('error', 'Erro ao excluir o colaborador: ' . $e->getMessage());
-        }
+        return Colaborador::class;
     }
 
     public function deleteSelected()
@@ -88,17 +78,13 @@ class Colaboradores extends Component
             return;
         }
 
-        DB::beginTransaction();
-        try {
-            Colaborador::whereIn('id', $this->selectedColaboradores)->delete();
-            
-            DB::commit();
-            $this->selectedColaboradores = [];
-            session()->flash('message', 'Colaboradores excluídos com sucesso!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            session()->flash('error', 'Erro ao excluir os colaboradores: ' . $e->getMessage());
+        foreach ($this->selectedColaboradores as $id) {
+            $this->confirmDelete($id);
+            $this->delete();
         }
+        
+        $this->selectedColaboradores = [];
+        session()->flash('message', 'Colaboradores selecionados foram excluídos com sucesso!');
     }
 
     public function render()
