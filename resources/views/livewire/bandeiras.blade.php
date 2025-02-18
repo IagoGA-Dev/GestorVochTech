@@ -1,7 +1,7 @@
 <div>
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h3 class="text-lg font-medium">Lista de Bandeiras</h3>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2 w-full sm:w-auto">
             <button 
                 wire:click="deleteSelected" 
                 @class([
@@ -17,7 +17,7 @@
                 Excluir @if($this->selectedCount > 0){{ $this->selectedCount }} @endif {{ $this->selectedCount == 1 ? 'selecionada' : 'selecionadas' }}
             </button>
             
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                 <x-primary-button
                     x-data
                     @click="$dispatch('open-modal', 'create-bandeira')">
