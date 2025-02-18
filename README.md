@@ -1,6 +1,6 @@
-# Projeto Laravel
+# Projeto Voch Tech
 
-Uma aplicação Laravel que demonstra a execução de funcionalidades básicas com banco de dados, autenticação e testes.
+Teste Prático para Desenvolvedor Full Stack
 
 ## Instalação
 
