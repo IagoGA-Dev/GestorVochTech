@@ -35,10 +35,10 @@ trait WithDelete
 
         $item->delete();
 
-        // Reset state before dispatching event
+        // Reset state and refresh page
         $this->resetDeleteState();
         
-        $this->dispatch('entity-deleted');
+        return $this->redirect(request()->header('Referer'));
     }
 
     public function cancelDelete()
