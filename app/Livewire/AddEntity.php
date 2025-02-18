@@ -81,7 +81,11 @@ class AddEntity extends Component
 
     public function resetForm()
     {
+        $entityName = $this->form->entityName;
+        $entityModel = $this->form->entityModel;
         $this->form->reset();
+        $this->form->entityName = $entityName;
+        $this->form->entityModel = $entityModel;
     }
 
     public function render()
