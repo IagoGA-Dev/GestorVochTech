@@ -24,18 +24,10 @@ trait WithDelete
 
         $item = $this->itemToDelete;
 
-        // Record activity before deletion to capture related entities
-        activity()
-            ->performedOn($item)
-            ->event('deleted')
-            ->withProperties([
-                'details' => $this->getDeleteActivityDetails()
-            ])
-            ->log('deleted');
 
         $item->delete();
 
-        // Reset state and refresh page
+        // Reseta o estado e atualiza a página
         $this->resetDeleteState();
         
         return $this->redirect(request()->header('Referer'));
@@ -64,7 +56,7 @@ trait WithDelete
             'name' => $this->itemToDelete->nome ?? $this->itemToDelete->nome_fantasia ?? '',
         ];
 
-        // Add related entities information based on model type
+        // Adiciona informações de entidades relacionadas baseado no tipo do modelo
         switch ($model) {
             case 'grupoeconomico':
                 $details['bandeiras'] = $this->itemToDelete->bandeiras->map(function ($bandeira) {
@@ -94,6 +86,6 @@ trait WithDelete
         return $details;
     }
 
-    // Should be implemented by the component using this trait
+    // Deve ser implementado pelo componente que utiliza este trait
     abstract protected function getModel();
 }
